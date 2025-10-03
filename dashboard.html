@@ -1,4 +1,3 @@
-<!-- Replace the entire navigation section in dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,23 +8,22 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="assets/style.css">
 </head>
-<body>
+<body class="bg-gray-50">
     <div class="app-container">
-        <!-- Premium Header -->
-        <header class="premium-header">
-            <div class="premium-header-content">
+        <!-- Clean Header -->
+        <header class="clean-header">
+            <div class="clean-header-content">
                 <div class="flex items-center gap-3">
-                    <a href="dashboard.html" class="premium-logo">💰 Earnzy</a>
+                    <h1 class="clean-logo">Earnzy</h1>
                 </div>
-                <div class="premium-header-actions">
-                    <a href="profile.html" class="premium-header-btn">👤</a>
-                    <button id="logoutBtn" class="premium-header-btn">🚪</button>
+                <div class="clean-header-actions">
+                    <button id="logoutBtn" class="clean-header-btn">Logout</button>
                 </div>
             </div>
         </header>
 
-        <!-- Your existing dashboard content -->
-        <main class="content-with-premium-nav p-4">
+        <!-- Main Content -->
+        <main class="content-with-clean-nav p-4">
             <!-- Welcome Card -->
             <div class="card-app mb-4">
                 <div class="flex items-center justify-between">
@@ -40,52 +38,239 @@
                 </div>
             </div>
 
-            <!-- Rest of your dashboard content remains same -->
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <div class="stat-card">
+                    <div class="text-2xl font-bold" id="totalCoins">0</div>
+                    <div class="text-sm opacity-90">Total Coins</div>
+                </div>
+                <div class="stat-card">
+                    <div class="text-2xl font-bold" id="dailyStreak">0</div>
+                    <div class="text-sm opacity-90">Day Streak</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold mb-3">Quick Actions</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <a href="watch.html" class="quick-action">
+                        <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-2">
+                            <span class="text-2xl text-blue-600">🎥</span>
+                        </div>
+                        <div class="font-bold text-sm">Watch Ads</div>
+                        <div class="text-xs text-gray-600">10-20 coins</div>
+                    </a>
+                    
+                    <a href="scratch.html" class="quick-action">
+                        <div class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-2">
+                            <span class="text-2xl text-purple-600">✨</span>
+                        </div>
+                        <div class="font-bold text-sm">Scratch Cards</div>
+                        <div class="text-xs text-gray-600">3 cards left</div>
+                    </a>
+                    
+                    <a href="checkin.html" class="quick-action">
+                        <div class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-2">
+                            <span class="text-2xl text-green-600">📅</span>
+                        </div>
+                        <div class="font-bold text-sm">Daily Check-in</div>
+                        <div class="text-xs text-gray-600">Claim reward</div>
+                    </a>
+                    
+                    <a href="treasure.html" class="quick-action">
+                        <div class="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-2">
+                            <span class="text-2xl text-red-600">🎁</span>
+                        </div>
+                        <div class="font-bold text-sm">Treasure Box</div>
+                        <div class="text-xs text-gray-600">1 box today</div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- More Earning Options -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold mb-3">More Ways to Earn</h3>
+                <div class="space-y-3">
+                    <a href="referral.html" class="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl border border-purple-100">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mr-3">
+                                <span class="text-xl text-purple-600">👥</span>
+                            </div>
+                            <div>
+                                <div class="font-bold">Refer Friends</div>
+                                <div class="text-sm text-gray-600">Earn 250 coins each</div>
+                            </div>
+                        </div>
+                        <div class="text-purple-600">→</div>
+                    </a>
+                    
+                    <a href="withdraw.html" class="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-100">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-3">
+                                <span class="text-xl text-green-600">💸</span>
+                            </div>
+                            <div>
+                                <div class="font-bold">Withdraw Earnings</div>
+                                <div class="text-sm text-gray-600">Convert to cash</div>
+                            </div>
+                        </div>
+                        <div class="text-green-600">→</div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card-app">
+                <h3 class="text-lg font-bold mb-4">Recent Activity</h3>
+                <div id="recentEarnings" class="space-y-3">
+                    <div class="text-center text-gray-500 py-4">
+                        <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <span class="text-gray-400">📊</span>
+                        </div>
+                        <p>No activity yet</p>
+                        <p class="text-sm">Start earning to see your activity here</p>
+                    </div>
+                </div>
+            </div>
         </main>
 
-        <!-- Premium Bottom Navigation -->
-        <nav class="premium-nav">
-            <a href="dashboard.html" class="premium-nav-item active">
-                <span class="premium-nav-icon">🏠</span>
-                <span class="premium-nav-label">Home</span>
+        <!-- Clean Bottom Navigation -->
+        <nav class="clean-nav">
+            <a href="dashboard.html" class="clean-nav-item active">
+                <span class="clean-nav-icon">🏠</span>
+                <span class="clean-nav-label">Home</span>
             </a>
-            <a href="watch.html" class="premium-nav-item">
-                <span class="premium-nav-icon">🎥</span>
-                <span class="premium-nav-label">Earn</span>
+            <a href="watch.html" class="clean-nav-item">
+                <span class="clean-nav-icon">🎥</span>
+                <span class="clean-nav-label">Earn</span>
             </a>
-            <a href="referral.html" class="premium-nav-item">
-                <span class="premium-nav-icon">👥</span>
-                <span class="premium-nav-label">Refer</span>
+            <a href="referral.html" class="clean-nav-item">
+                <span class="clean-nav-icon">👥</span>
+                <span class="clean-nav-label">Refer</span>
             </a>
-            <a href="withdraw.html" class="premium-nav-item">
-                <span class="premium-nav-icon">💸</span>
-                <span class="premium-nav-label">Cash</span>
+            <a href="profile.html" class="clean-nav-item">
+                <span class="clean-nav-icon">👤</span>
+                <span class="clean-nav-label">Profile</span>
             </a>
         </nav>
-
-        <!-- Floating Action Button -->
-        <button class="fab" onclick="window.location.href='profile.html'">
-            👤
-        </button>
     </div>
 
     <script>
-        // Your existing JavaScript code
-        // Initialize Supabase and other functions...
+        // Initialize Supabase
+        const supabaseUrl = 'https://qwoqpwyjugfsiwlwvmlf.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3b3Fwd3lqdWdmc2l3bHd2bWxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0NzkzNDAsImV4cCI6MjA3NTA1NTM0MH0.36cfavBebNeF4SLuar3jUTRORYnhaOhc6A5xuF4HvLw';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
         
-        // Premium navigation active state
-        document.querySelectorAll('.premium-nav-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelectorAll('.premium-nav-item').forEach(nav => {
-                    nav.classList.remove('active');
-                });
-                this.classList.add('active');
+        let userId = null;
+        
+        // Check authentication
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (!session) {
+                window.location.href = 'login.html';
+            } else {
+                userId = session.user.id;
+                loadUserData();
+                loadRecentEarnings();
+            }
+        });
+        
+        // Load user data
+        async function loadUserData() {
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', userId)
+                    .single();
                 
-                // Navigate after animation
-                setTimeout(() => {
-                    window.location.href = this.getAttribute('href');
-                }, 300);
+                if (error) throw error;
+                
+                document.getElementById('userEmail').textContent = data.email;
+                document.getElementById('referralCode').textContent = data.referral_code;
+                document.getElementById('totalCoins').textContent = data.total_coins;
+                document.getElementById('dailyStreak').textContent = data.daily_streak;
+                
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+        
+        // Load recent earnings
+        async function loadRecentEarnings() {
+            try {
+                const { data, error } = await supabase
+                    .from('earnings')
+                    .select('*')
+                    .eq('user_id', userId)
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+                
+                if (error) throw error;
+                
+                const earningsContainer = document.getElementById('recentEarnings');
+                earningsContainer.innerHTML = '';
+                
+                if (data.length === 0) {
+                    earningsContainer.innerHTML = `
+                        <div class="text-center text-gray-500 py-4">
+                            <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <span class="text-gray-400">📊</span>
+                            </div>
+                            <p>No activity yet</p>
+                            <p class="text-sm">Start earning to see your activity here</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                data.forEach(earning => {
+                    const earningElement = document.createElement('div');
+                    earningElement.className = 'flex justify-between items-center py-2';
+                    
+                    const typeMap = {
+                        'watch': { icon: '🎥', color: 'blue' },
+                        'scratch': { icon: '✨', color: 'purple' },
+                        'checkin': { icon: '📅', color: 'green' },
+                        'treasure': { icon: '🎁', color: 'red' },
+                        'referral': { icon: '👥', color: 'indigo' }
+                    };
+                    
+                    const typeInfo = typeMap[earning.type] || { icon: '💰', color: 'gray' };
+                    const date = new Date(earning.created_at);
+                    const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    earningElement.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-${typeInfo.color}-100 rounded-lg flex items-center justify-center mr-3">
+                                <span class="text-${typeInfo.color}-600">${typeInfo.icon}</span>
+                            </div>
+                            <div>
+                                <div class="font-medium text-sm">${earning.type.charAt(0).toUpperCase() + earning.type.slice(1)}</div>
+                                <div class="text-xs text-gray-500">${timeString}</div>
+                            </div>
+                        </div>
+                        <div class="font-bold text-green-600">+${earning.coins}</div>
+                    `;
+                    
+                    earningsContainer.appendChild(earningElement);
+                });
+            } catch (error) {
+                console.error('Error loading recent earnings:', error);
+            }
+        }
+        
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await supabase.auth.signOut();
+            window.location.href = 'login.html';
+        });
+        
+        // Navigation active state
+        document.querySelectorAll('.clean-nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.clean-nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
             });
         });
     </script>
