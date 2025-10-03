@@ -1,0 +1,69 @@
+// assets/wallet.js
+// Wallet-related functions
+
+async function getUserWallet(userId) {
+    const { data, error } = await supabase
+        .from('users')
+        .select('total_coins, earned_coins, withdrawn_coins')
+        .eq('id', userId)
+        .single();
+    
+    if (error) throw error;
+    return data;
+}
+
+async function addCoinsToWallet(userId, coins, type = 'other') {
+    try {
+        // Add earning record
+        const { error: earningError } = await supabase
+            .from('earnings')
+            .insert([
+                { 
+                    user_id: userId,
+                    type: type,
+                    coins: coins
+                }
+            ]);
+        
+        if (earningError) throw earningError;
+        
+        // Update user's wallet
+        const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('total_coins, earned_coins')
+            .eq('id', userId)
+            .single();
+        
+        if (userError) throw userError;
+        
+        const { error: updateError } = await supabase
+            .from('users')
+            .update({
+                total_coins: userData.total_coins + coins,
+                earned_coins: userData.earned_coins + coins
+            })
+            .eq('id', userId);
+        
+        if (updateError) throw updateError;
+        
+        return true;
+    } catch (error) {
+        console.error('Error adding coins to wallet:', error);
+        return false;
+    }
+}
+
+async function getTodayEarnings(userId, type) {
+    const today = new Date().toISOString().split('T')[0];
+    
+    const { data, error } = await supabase
+        .from('earnings')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('type', type)
+        .gte('created_at', today + 'T00:00:00')
+        .lte('created_at', today + 'T23:59:59');
+    
+    if (error) throw error;
+    return data.length;
+}
