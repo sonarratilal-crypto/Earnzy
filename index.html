@@ -6,17 +6,179 @@
     <title>Earnzy - Earn Money</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .app-container {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+        
+        .card-app {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .card-app:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-app {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-app:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
+        }
+        
+        .btn-app:active {
+            transform: translateY(0);
+        }
+        
+        .quick-action {
+            transition: all 0.3s ease;
+        }
+        
+        .quick-action:hover {
+            transform: scale(1.05);
+        }
+        
+        .earnzy-logo {
+            font-weight: 700;
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.8s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .stat-item {
+            padding: 10px;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #8b5cf6;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .testimonial-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        
+        .testimonial-author {
+            font-weight: 600;
+            color: #4b5563;
+        }
+        
+        .testimonial-role {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .floating-coin {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0.7;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
         <!-- App Header -->
-        <header class="bg-white border-b border-gray-200">
+        <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
             <div class="px-4 py-3">
                 <div class="flex justify-between items-center">
-                    <h1 class="text-xl font-bold text-gray-800">Earnzy</h1>
+                    <h1 class="text-xl font-bold text-gray-800"><span class="earnzy-logo">Earnzy</span></h1>
                     <div class="flex gap-2">
-                        <a href="login.html" class="px-4 py-2 text-gray-600 font-medium rounded-lg hover:bg-gray-100">Login</a>
+                        <a href="login.html" class="px-4 py-2 text-gray-600 font-medium rounded-lg hover:bg-gray-100 transition-colors">Login</a>
                         <a href="signup.html" class="btn-app px-4 py-2 text-sm">Sign Up</a>
                     </div>
                 </div>
@@ -24,49 +186,70 @@
         </header>
 
         <!-- Hero Section -->
-        <section class="gradient-bg text-white">
-            <div class="px-6 py-12 text-center">
-                <div class="w-20 h-20 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <span class="text-3xl">💰</span>
+        <section class="gradient-bg text-white relative overflow-hidden">
+            <div class="floating-coin" style="top: 20%; left: 10%;">💰</div>
+            <div class="floating-coin" style="top: 30%; right: 15%;">💸</div>
+            <div class="floating-coin" style="bottom: 20%; left: 20%;">🪙</div>
+            
+            <div class="px-6 py-16 text-center relative z-1">
+                <div class="w-24 h-24 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center mx-auto mb-6 pulse">
+                    <span class="text-4xl">💰</span>
                 </div>
-                <h1 class="text-3xl font-bold mb-4">Start Earning Money</h1>
-                <p class="text-lg opacity-90 mb-8">Complete tasks, watch videos, and refer friends to earn real money</p>
-                <a href="signup.html" class="btn-app bg-white text-purple-600 hover:bg-gray-100">Start Earning Now</a>
+                <h1 class="text-4xl font-bold mb-4">Start Earning Real Money</h1>
+                <p class="text-xl opacity-90 mb-8 max-w-md mx-auto">Complete simple tasks, watch videos, and refer friends to earn real money daily</p>
+                <a href="signup.html" class="btn-app bg-white text-purple-600 hover:bg-gray-100 text-lg px-8 py-3">Start Earning Now</a>
+                
+                <!-- Stats -->
+                <div class="stats-container max-w-md mx-auto mt-12">
+                    <div class="stat-item">
+                        <div class="stat-number">50K+</div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">₹2Cr+</div>
+                        <div class="stat-label">Paid Out</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">4.8★</div>
+                        <div class="stat-label">Rating</div>
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- Features Grid -->
         <section class="p-6">
-            <h2 class="text-2xl font-bold text-center mb-8">How It Works</h2>
+            <h2 class="text-2xl font-bold text-center mb-2">How It Works</h2>
+            <p class="text-gray-600 text-center mb-8 max-w-md mx-auto">Start earning in just 3 simple steps</p>
             
-            <div class="space-y-4">
-                <div class="card-app flex items-center fade-in">
+            <div class="space-y-4 max-w-lg mx-auto">
+                <div class="card-app flex items-center fade-in" style="animation-delay: 0.1s">
                     <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mr-4">
-                        <span class="text-xl">📱</span>
+                        <span class="text-xl text-purple-600">📱</span>
                     </div>
                     <div>
                         <h3 class="font-bold text-lg">Sign Up Free</h3>
-                        <p class="text-gray-600 text-sm">Create account in 30 seconds</p>
+                        <p class="text-gray-600 text-sm">Create account in 30 seconds & get 100 welcome coins</p>
                     </div>
                 </div>
                 
-                <div class="card-app flex items-center fade-in">
+                <div class="card-app flex items-center fade-in" style="animation-delay: 0.3s">
                     <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-4">
-                        <span class="text-xl">🎯</span>
+                        <span class="text-xl text-green-600">🎯</span>
                     </div>
                     <div>
                         <h3 class="font-bold text-lg">Complete Tasks</h3>
-                        <p class="text-gray-600 text-sm">Watch ads, scratch cards & more</p>
+                        <p class="text-gray-600 text-sm">Watch ads, play games, answer surveys & more</p>
                     </div>
                 </div>
                 
-                <div class="card-app flex items-center fade-in">
+                <div class="card-app flex items-center fade-in" style="animation-delay: 0.5s">
                     <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
-                        <span class="text-xl">💸</span>
+                        <span class="text-xl text-blue-600">💸</span>
                     </div>
                     <div>
                         <h3 class="font-bold text-lg">Withdraw Money</h3>
-                        <p class="text-gray-600 text-sm">Get paid via UPI, Paytm, PayPal</p>
+                        <p class="text-gray-600 text-sm">Get paid instantly via UPI, Paytm, or PayPal</p>
                     </div>
                 </div>
             </div>
@@ -74,15 +257,17 @@
 
         <!-- Earning Methods -->
         <section class="p-6">
-            <h2 class="text-2xl font-bold text-center mb-6">Ways to Earn</h2>
+            <h2 class="text-2xl font-bold text-center mb-2">Ways to Earn</h2>
+            <p class="text-gray-600 text-center mb-8 max-w-md mx-auto">Multiple earning opportunities to maximize your income</p>
             
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-4">
                 <div class="card-app text-center quick-action">
                     <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
                         <span class="text-2xl text-blue-600">🎥</span>
                     </div>
                     <h3 class="font-bold">Watch Ads</h3>
                     <p class="text-gray-600 text-sm">10-20 coins per ad</p>
+                    <div class="mt-2 text-xs text-blue-600 font-medium">EASY</div>
                 </div>
                 
                 <div class="card-app text-center quick-action">
@@ -91,6 +276,7 @@
                     </div>
                     <h3 class="font-bold">Scratch Cards</h3>
                     <p class="text-gray-600 text-sm">5-50 coins each</p>
+                    <div class="mt-2 text-xs text-purple-600 font-medium">LUCKY</div>
                 </div>
                 
                 <div class="card-app text-center quick-action">
@@ -99,6 +285,7 @@
                     </div>
                     <h3 class="font-bold">Daily Check-in</h3>
                     <p class="text-gray-600 text-sm">Build your streak</p>
+                    <div class="mt-2 text-xs text-green-600 font-medium">DAILY</div>
                 </div>
                 
                 <div class="card-app text-center quick-action">
@@ -107,6 +294,31 @@
                     </div>
                     <h3 class="font-bold">Treasure Box</h3>
                     <p class="text-gray-600 text-sm">20-200 coins daily</p>
+                    <div class="mt-2 text-xs text-red-600 font-medium">BONUS</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="p-6">
+            <h2 class="text-2xl font-bold text-center mb-2">What Our Users Say</h2>
+            <p class="text-gray-600 text-center mb-6 max-w-md mx-auto">Real people, real earnings</p>
+            
+            <div class="grid grid-cols-1 gap-4 max-w-lg mx-auto">
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "I've earned over ₹5000 in just 3 months with Earnzy. It's so easy to use during my free time!"
+                    </div>
+                    <div class="testimonial-author">Priya S.</div>
+                    <div class="testimonial-role">Student, Delhi</div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "The daily check-in and referral bonuses really add up. I withdraw ₹1000 every month for my mobile recharge."
+                    </div>
+                    <div class="testimonial-author">Rahul K.</div>
+                    <div class="testimonial-role">Freelancer, Mumbai</div>
                 </div>
             </div>
         </section>
@@ -114,9 +326,10 @@
         <!-- CTA Section -->
         <section class="p-6">
             <div class="card-app bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-center">
-                <h3 class="text-xl font-bold mb-2">Ready to Start?</h3>
-                <p class="opacity-90 mb-4">Join thousands earning with Earnzy</p>
-                <a href="signup.html" class="btn-app bg-white text-purple-600 inline-block">Get Started Free</a>
+                <h3 class="text-2xl font-bold mb-3">Ready to Start Earning?</h3>
+                <p class="opacity-90 mb-6 max-w-md mx-auto">Join 50,000+ users who are already earning with Earnzy</p>
+                <a href="signup.html" class="btn-app bg-white text-purple-600 inline-block px-8 py-3">Get Started Free</a>
+                <p class="text-sm opacity-80 mt-4">No registration fees • Instant withdrawals • 24/7 support</p>
             </div>
         </section>
     </div>
@@ -130,6 +343,25 @@
             if (session) {
                 window.location.href = 'dashboard.html';
             }
+        });
+        
+        // Add scroll animation for elements
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            });
+            
+            fadeElements.forEach(el => {
+                el.style.animationPlayState = 'paused';
+                observer.observe(el);
+            });
         });
     </script>
 </body>
