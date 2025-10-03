@@ -1,0 +1,138 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earnzy - Start Earning Now</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-purple-600">Earnzy</h1>
+            <div>
+                <a href="login.html" class="bg-purple-600 text-white px-4 py-2 rounded-lg font-medium mr-2">Login</a>
+                <a href="signup.html" class="bg-white text-purple-600 border border-purple-600 px-4 py-2 rounded-lg font-medium">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">Start Earning Money Online</h1>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">Complete simple tasks, watch videos, and refer friends to earn real money. Join thousands of users making money with Earnzy.</p>
+            <a href="signup.html" class="bg-white text-purple-600 font-bold px-8 py-3 rounded-lg text-lg inline-block">Start Earning Now</a>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">How It Works</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-50 p-6 rounded-xl card-hover text-center">
+                    <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">1</div>
+                    <h3 class="text-xl font-bold mb-3">Sign Up</h3>
+                    <p class="text-gray-600">Create your free account in seconds. Use a referral code to get bonus coins.</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl card-hover text-center">
+                    <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">2</div>
+                    <h3 class="text-xl font-bold mb-3">Complete Tasks</h3>
+                    <p class="text-gray-600">Watch videos, scratch cards, daily check-ins and more to earn coins.</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl card-hover text-center">
+                    <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">3</div>
+                    <h3 class="text-xl font-bold mb-3">Withdraw Earnings</h3>
+                    <p class="text-gray-600">Convert your coins to real money and withdraw via UPI, Paytm or PayPal.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Ways To Earn</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm card-hover">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xl mb-4">🎥</div>
+                    <h3 class="text-xl font-bold mb-2">Watch Videos</h3>
+                    <p class="text-gray-600 mb-4">Watch short ads and videos to earn 10-20 coins each. Max 50 videos per day.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm card-hover">
+                    <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center text-xl mb-4">✨</div>
+                    <h3 class="text-xl font-bold mb-2">Scratch Cards</h3>
+                    <p class="text-gray-600 mb-4">Scratch 3 cards daily to win 5-50 coins each. Exciting rewards every time!</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm card-hover">
+                    <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center text-xl mb-4">📅</div>
+                    <h3 class="text-xl font-bold mb-2">Daily Check-in</h3>
+                    <p class="text-gray-600 mb-4">Check in daily to build your streak. Earn 10-100 coins based on your streak.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm card-hover">
+                    <div class="w-12 h-12 bg-red-100 text-red-600 rounded-lg flex items-center justify-center text-xl mb-4">🎁</div>
+                    <h3 class="text-xl font-bold mb-2">Treasure Box</h3>
+                    <p class="text-gray-600 mb-4">Open one treasure box daily to win 20-200 coins. Big rewards await!</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm card-hover">
+                    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center text-xl mb-4">👥</div>
+                    <h3 class="text-xl font-bold mb-2">Refer Friends</h3>
+                    <p class="text-gray-600 mb-4">Invite friends and earn 250 coins when they sign up. They get 250 coins too!</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm card-hover">
+                    <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center text-xl mb-4">💳</div>
+                    <h3 class="text-xl font-bold mb-2">Easy Withdrawals</h3>
+                    <p class="text-gray-600 mb-4">Withdraw your earnings via UPI, Paytm or PayPal. Low 5% processing fee.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-16 bg-purple-700 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-6">Ready to Start Earning?</h2>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">Join Earnzy today and start making money from your phone. It's free, easy, and fun!</p>
+            <a href="signup.html" class="bg-white text-purple-600 font-bold px-8 py-3 rounded-lg text-lg inline-block">Get Started Now</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400">© 2023 Earnzy. All rights reserved.</p>
+            <p class="text-gray-500 mt-2">The most powerful earning platform.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Supabase
+        const supabaseUrl = 'https://qwoqpwyjugfsiwlwvmlf.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3b3Fwd3lqdWdmc2l3bHd2bWxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0NzkzNDAsImV4cCI6MjA3NTA1NTM0MH0.36cfavBebNeF4SLuar3jUTRORYnhaOhc6A5xuF4HvLw';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        
+        // Check if user is already logged in
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html>
