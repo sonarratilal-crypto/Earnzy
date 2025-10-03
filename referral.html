@@ -1,0 +1,331 @@
+<!-- referral.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referral Program - Earnzy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="dashboard.html" class="text-purple-600 font-medium">← Back</a>
+            <h1 class="text-xl font-bold text-gray-800">Referral Program</h1>
+            <div class="w-6"></div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Stats Card -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">Invite Friends & Earn</h2>
+                    <p class="text-gray-600 mt-1">Share your referral code and earn 250 coins when friends join</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-gray-600">Total Referrals</p>
+                    <p class="text-2xl font-bold" id="totalReferrals">0</p>
+                    <p class="text-sm text-gray-500">friends joined</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Referral Code Section -->
+        <div class="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl shadow-sm p-6 mb-6 text-white">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl">👥</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Your Referral Code</h3>
+                <p class="opacity-90">Share this code with friends to earn bonus coins</p>
+            </div>
+            
+            <div class="bg-white bg-opacity-10 rounded-lg p-4 mb-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-sm opacity-80">Your Code</p>
+                        <p class="text-xl font-bold font-mono" id="referralCodeDisplay">Loading...</p>
+                    </div>
+                    <button id="copyCodeBtn" class="bg-white text-purple-600 px-4 py-2 rounded-lg font-medium">
+                        Copy Code
+                    </button>
+                </div>
+            </div>
+            
+            <div class="bg-white bg-opacity-10 rounded-lg p-4">
+                <p class="text-sm opacity-80 mb-2">Share Link</p>
+                <div class="flex justify-between items-center">
+                    <p class="text-sm truncate mr-2" id="referralLink">Loading...</p>
+                    <button id="copyLinkBtn" class="bg-white text-purple-600 px-3 py-1 rounded text-sm font-medium">
+                        Copy
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- How It Works -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h3 class="text-xl font-bold mb-4">How Referral Works</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="text-center p-4">
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="text-purple-600">1</span>
+                    </div>
+                    <h4 class="font-bold mb-2">Share Your Code</h4>
+                    <p class="text-gray-600 text-sm">Share your unique referral code with friends</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="text-purple-600">2</span>
+                    </div>
+                    <h4 class="font-bold mb-2">Friend Signs Up</h4>
+                    <p class="text-gray-600 text-sm">Your friend signs up using your referral code</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="text-purple-600">3</span>
+                    </div>
+                    <h4 class="font-bold mb-2">Both Get Bonus</h4>
+                    <p class="text-gray-600 text-sm">You both get 250 coins when they complete first task</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Referral Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-xl font-bold mb-4">Referral Earnings</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <p class="text-gray-600">Total Referral Earnings</p>
+                        <p class="font-bold text-green-600" id="referralEarnings">0 coins</p>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <p class="text-gray-600">Pending Bonuses</p>
+                        <p class="font-bold text-yellow-600" id="pendingBonuses">0 coins</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-xl font-bold mb-4">Quick Share</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <button class="bg-blue-600 text-white py-2 rounded-lg font-medium flex items-center justify-center">
+                        <span class="mr-2">📱</span> WhatsApp
+                    </button>
+                    <button class="bg-blue-400 text-white py-2 rounded-lg font-medium flex items-center justify-center">
+                        <span class="mr-2">🐦</span> Twitter
+                    </button>
+                    <button class="bg-blue-800 text-white py-2 rounded-lg font-medium flex items-center justify-center">
+                        <span class="mr-2">💼</span> Facebook
+                    </button>
+                    <button class="bg-gray-800 text-white py-2 rounded-lg font-medium flex items-center justify-center">
+                        <span class="mr-2">📧</span> Email
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Referred Friends -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="text-xl font-bold mb-4">Referred Friends</h3>
+            <div id="referredFriends" class="space-y-3">
+                <div class="text-center text-gray-500 py-4">No friends referred yet</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-2xl p-8 mx-4 max-w-sm w-full text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="text-2xl text-green-600">✅</span>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Copied!</h3>
+            <p class="text-gray-600 mb-6" id="copiedText">Referral code copied to clipboard</p>
+            <button id="closeModal" class="w-full bg-green-600 text-white py-3 rounded-lg font-medium">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Supabase
+        const supabaseUrl = 'https://qwoqpwyjugfsiwlwvmlf.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3b3Fwd3lqdWdmc2l3bHd2bWxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0NzkzNDAsImV4cCI6MjA3NTA1NTM0MH0.36cfavBebNeF4SLuar3jUTRORYnhaOhc6A5xuF4HvLw';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        
+        let userId = null;
+        let referralCode = '';
+        
+        // Check authentication
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (!session) {
+                window.location.href = 'login.html';
+            } else {
+                userId = session.user.id;
+                loadReferralData();
+                loadReferredFriends();
+            }
+        });
+        
+        // Load referral data
+        async function loadReferralData() {
+            try {
+                // Get user's referral code
+                const { data: userData, error } = await supabase
+                    .from('users')
+                    .select('referral_code')
+                    .eq('id', userId)
+                    .single();
+                
+                if (error) throw error;
+                
+                referralCode = userData.referral_code;
+                document.getElementById('referralCodeDisplay').textContent = referralCode;
+                
+                const referralLink = `${window.location.origin}/signup.html?ref=${referralCode}`;
+                document.getElementById('referralLink').textContent = referralLink;
+                
+                // Get referral stats
+                const { data: referralsData, error: referralsError } = await supabase
+                    .from('referrals')
+                    .select('*')
+                    .eq('inviter_id', userId);
+                
+                if (referralsError) throw referralsError;
+                
+                document.getElementById('totalReferrals').textContent = referralsData.length;
+                
+                // Calculate referral earnings
+                const { data: earningsData, error: earningsError } = await supabase
+                    .from('earnings')
+                    .select('coins')
+                    .eq('user_id', userId)
+                    .eq('type', 'referral');
+                
+                if (earningsError) throw earningsError;
+                
+                const totalEarnings = earningsData.reduce((sum, earning) => sum + earning.coins, 0);
+                document.getElementById('referralEarnings').textContent = `${totalEarnings} coins`;
+                
+                // Calculate pending bonuses (referrals without bonus given)
+                const pendingCount = referralsData.filter(ref => !ref.bonus_given).length;
+                document.getElementById('pendingBonuses').textContent = `${pendingCount * 250} coins`;
+                
+            } catch (error) {
+                console.error('Error loading referral data:', error);
+            }
+        }
+        
+        // Load referred friends
+        async function loadReferredFriends() {
+            try {
+                const { data: referralsData, error } = await supabase
+                    .from('referrals')
+                    .select(`
+                        *,
+                        invitee:users!referrals_invitee_id_fkey (email, created_at)
+                    `)
+                    .eq('inviter_id', userId)
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                const friendsContainer = document.getElementById('referredFriends');
+                friendsContainer.innerHTML = '';
+                
+                if (referralsData.length === 0) {
+                    friendsContainer.innerHTML = '<div class="text-center text-gray-500 py-4">No friends referred yet</div>';
+                    return;
+                }
+                
+                referralsData.forEach(referral => {
+                    const friendElement = document.createElement('div');
+                    friendElement.className = 'flex justify-between items-center py-3 border-b';
+                    
+                    const date = new Date(referral.created_at);
+                    const dateString = date.toLocaleDateString();
+                    const status = referral.bonus_given ? 'Bonus Paid' : 'Pending Bonus';
+                    const statusColor = referral.bonus_given ? 'text-green-600' : 'text-yellow-600';
+                    
+                    friendElement.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-purple-600">👤</span>
+                            </div>
+                            <div>
+                                <div class="font-medium">${referral.invitee.email}</div>
+                                <div class="text-sm text-gray-500">Joined ${dateString}</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-medium ${statusColor}">${status}</div>
+                            <div class="text-sm text-gray-500">250 coins</div>
+                        </div>
+                    `;
+                    
+                    friendsContainer.appendChild(friendElement);
+                });
+            } catch (error) {
+                console.error('Error loading referred friends:', error);
+            }
+        }
+        
+        // Copy code button
+        document.getElementById('copyCodeBtn').addEventListener('click', () => {
+            navigator.clipboard.writeText(referralCode).then(() => {
+                document.getElementById('copiedText').textContent = 'Referral code copied to clipboard';
+                document.getElementById('successModal').classList.remove('hidden');
+            });
+        });
+        
+        // Copy link button
+        document.getElementById('copyLinkBtn').addEventListener('click', () => {
+            const referralLink = `${window.location.origin}/signup.html?ref=${referralCode}`;
+            navigator.clipboard.writeText(referralLink).then(() => {
+                document.getElementById('copiedText').textContent = 'Referral link copied to clipboard';
+                document.getElementById('successModal').classList.remove('hidden');
+            });
+        });
+        
+        // Share buttons
+        const shareButtons = document.querySelectorAll('button:not(#copyCodeBtn):not(#copyLinkBtn):not(#closeModal)');
+        shareButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const platform = button.textContent.trim();
+                const referralLink = `${window.location.origin}/signup.html?ref=${referralCode}`;
+                const message = `Join Earnzy and start earning money! Use my referral code: ${referralCode} or click: ${referralLink}`;
+                
+                let shareUrl = '';
+                
+                switch (platform) {
+                    case 'WhatsApp':
+                        shareUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+                        break;
+                    case 'Twitter':
+                        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
+                        break;
+                    case 'Facebook':
+                        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}`;
+                        break;
+                    case 'Email':
+                        shareUrl = `mailto:?subject=Join Earnzy and Start Earning&body=${encodeURIComponent(message)}`;
+                        break;
+                }
+                
+                if (shareUrl) {
+                    window.open(shareUrl, '_blank');
+                }
+            });
+        });
+        
+        // Close modal
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('successModal').classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
