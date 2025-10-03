@@ -6,119 +6,8 @@
     <title>Dashboard - Earnzy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        /* Mobile App Styles */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8fafc;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        .app-container {
-            max-width: 428px;
-            margin: 0 auto;
-            background: white;
-            min-height: 100vh;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            position: relative;
-        }
-        
-        .card-app {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            margin-bottom: 16px;
-            border: 1px solid #f1f5f9;
-        }
-        
-        .btn-app {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            color: white;
-            font-weight: 600;
-            font-size: 16px;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            transition: all 0.3s ease;
-            display: block;
-            text-decoration: none;
-            text-align: center;
-            width: 100%;
-        }
-        
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 428px;
-            background: white;
-            border-top: 1px solid #e2e8f0;
-            padding: 8px 0;
-            display: flex;
-            justify-content: space-around;
-            z-index: 1000;
-        }
-        
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 8px 12px;
-            border-radius: 12px;
-            text-decoration: none;
-            color: #64748b;
-            transition: all 0.3s ease;
-            flex: 1;
-            max-width: 80px;
-        }
-        
-        .nav-item.active {
-            color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
-        }
-        
-        .nav-icon {
-            font-size: 20px;
-            margin-bottom: 4px;
-        }
-        
-        .nav-label {
-            font-size: 12px;
-            font-weight: 500;
-        }
-        
-        .content-with-nav {
-            padding-bottom: 80px;
-        }
-        
-        /* Stats Grid */
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .quick-action {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid #f1f5f9;
-            transition: all 0.3s ease;
-        }
-        
-        .quick-action:active {
-            transform: scale(0.95);
-            background: #f8fafc;
-        }
-    </style>
+    <!-- External CSS File -->
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
     <div class="app-container">
@@ -130,7 +19,7 @@
                         <h1 class="text-xl font-bold text-gray-800">Earnzy</h1>
                         <p class="text-sm text-gray-600" id="userEmail">Loading...</p>
                     </div>
-                    <button id="logoutBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg font-medium text-sm">
+                    <button id="logoutBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg font-medium text-sm hover:bg-red-600 transition-colors">
                         Logout
                     </button>
                 </div>
@@ -148,7 +37,7 @@
                     </div>
                     <div class="text-right">
                         <p class="text-sm text-gray-600">Referral Code</p>
-                        <p class="font-mono font-bold text-purple-600" id="referralCode">Loading...</p>
+                        <p class="font-mono font-bold text-primary" id="referralCode">Loading...</p>
                     </div>
                 </div>
             </div>
@@ -207,7 +96,7 @@
             <div class="mb-6">
                 <h3 class="text-lg font-bold mb-3">More Ways to Earn</h3>
                 <div class="space-y-3">
-                    <a href="referral.html" class="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl border border-purple-100">
+                    <a href="referral.html" class="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl border border-purple-100 hover:shadow-md transition-all">
                         <div class="flex items-center">
                             <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mr-3">
                                 <span class="text-xl text-purple-600">👥</span>
@@ -217,10 +106,10 @@
                                 <div class="text-sm text-gray-600">Earn 250 coins each</div>
                             </div>
                         </div>
-                        <div class="text-purple-600">→</div>
+                        <div class="text-purple-600 font-bold">→</div>
                     </a>
                     
-                    <a href="withdraw.html" class="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-100">
+                    <a href="withdraw.html" class="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-100 hover:shadow-md transition-all">
                         <div class="flex items-center">
                             <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-3">
                                 <span class="text-xl text-green-600">💸</span>
@@ -230,7 +119,7 @@
                                 <div class="text-sm text-gray-600">Convert to cash</div>
                             </div>
                         </div>
-                        <div class="text-green-600">→</div>
+                        <div class="text-green-600 font-bold">→</div>
                     </a>
                 </div>
             </div>
