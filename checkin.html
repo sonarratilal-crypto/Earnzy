@@ -1,0 +1,326 @@
+<!-- checkin.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Check-in - Earnzy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="dashboard.html" class="text-purple-600 font-medium">← Back</a>
+            <h1 class="text-xl font-bold text-gray-800">Daily Check-in</h1>
+            <div class="w-6"></div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Stats Card -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">Daily Check-in Streak</h2>
+                    <p class="text-gray-600 mt-1">Check in daily to build your streak and earn bonus coins</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-gray-600">Current Streak</p>
+                    <p class="text-2xl font-bold" id="currentStreak">0</p>
+                    <p class="text-sm text-gray-500">days</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Check-in Status -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6 text-center">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="text-3xl text-green-600" id="checkinIcon">📅</span>
+            </div>
+            <h3 class="text-xl font-bold mb-2" id="checkinTitle">Daily Check-in</h3>
+            <p class="text-gray-600 mb-4" id="checkinDescription">Check in today to earn your daily coins</p>
+            <button id="checkinBtn" class="bg-green-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition duration-200">
+                Check In Today
+            </button>
+            <p class="text-sm text-gray-500 mt-3" id="todayReward">Today's reward: <span class="font-bold">10 coins</span></p>
+        </div>
+
+        <!-- Streak Calendar -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h3 class="text-xl font-bold mb-4">7-Day Streak Bonus</h3>
+            <div class="grid grid-cols-7 gap-2">
+                <div class="text-center p-3 bg-green-50 rounded-lg border border-green-200">
+                    <p class="text-sm font-medium">Day 1</p>
+                    <p class="text-green-700 font-bold">10</p>
+                </div>
+                <div class="text-center p-3 bg-green-50 rounded-lg border border-green-200">
+                    <p class="text-sm font-medium">Day 2</p>
+                    <p class="text-green-700 font-bold">20</p>
+                </div>
+                <div class="text-center p-3 bg-green-50 rounded-lg border border-green-200">
+                    <p class="text-sm font-medium">Day 3</p>
+                    <p class="text-green-700 font-bold">30</p>
+                </div>
+                <div class="text-center p-3 bg-green-50 rounded-lg border border-green-200">
+                    <p class="text-sm font-medium">Day 4</p>
+                    <p class="text-green-700 font-bold">40</p>
+                </div>
+                <div class="text-center p-3 bg-green-50 rounded-lg border border-green-200">
+                    <p class="text-sm font-medium">Day 5</p>
+                    <p class="text-green-700 font-bold">50</p>
+                </div>
+                <div class="text-center p-3 bg-green-50 rounded-lg border border-green-200">
+                    <p class="text-sm font-medium">Day 6</p>
+                    <p class="text-green-700 font-bold">75</p>
+                </div>
+                <div class="text-center p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <p class="text-sm font-medium">Day 7</p>
+                    <p class="text-yellow-700 font-bold">100</p>
+                </div>
+            </div>
+            <p class="text-center text-gray-600 mt-4">Complete 7 days to earn 100 coins bonus!</p>
+        </div>
+
+        <!-- Check-in History -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="text-xl font-bold mb-4">Recent Check-ins</h3>
+            <div id="checkinHistory" class="space-y-3">
+                <div class="text-center text-gray-500 py-4">No check-in history yet</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-2xl p-8 mx-4 max-w-sm w-full text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="text-2xl text-green-600">✅</span>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Check-in Successful!</h3>
+            <p class="text-gray-600 mb-2">Daily streak updated</p>
+            <p class="text-2xl font-bold text-green-600 mb-2" id="streakReward">+10 coins</p>
+            <p class="text-sm text-gray-500 mb-6">New streak: <span id="newStreakCount" class="font-bold">1 day</span></p>
+            <button id="closeModal" class="w-full bg-green-600 text-white py-3 rounded-lg font-medium">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Supabase
+        const supabaseUrl = 'https://qwoqpwyjugfsiwlwvmlf.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3b3Fwd3lqdWdmc2l3bHd2bWxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0NzkzNDAsImV4cCI6MjA3NTA1NTM0MH0.36cfavBebNeF4SLuar3jUTRORYnhaOhc6A5xuF4HvLw';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        
+        let userId = null;
+        let currentStreak = 0;
+        let todayCheckedIn = false;
+        
+        // Check authentication
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (!session) {
+                window.location.href = 'login.html';
+            } else {
+                userId = session.user.id;
+                loadCheckinStatus();
+                loadCheckinHistory();
+            }
+        });
+        
+        // Load check-in status
+        async function loadCheckinStatus() {
+            try {
+                const { data: userData, error } = await supabase
+                    .from('users')
+                    .select('daily_streak, last_checkin')
+                    .eq('id', userId)
+                    .single();
+                
+                if (error) throw error;
+                
+                currentStreak = userData.daily_streak || 0;
+                document.getElementById('currentStreak').textContent = currentStreak;
+                
+                const today = new Date().toISOString().split('T')[0];
+                const lastCheckin = userData.last_checkin;
+                
+                // Check if user already checked in today
+                if (lastCheckin === today) {
+                    todayCheckedIn = true;
+                    updateCheckinUI(true);
+                } else {
+                    // Check if streak should be reset (missed a day)
+                    if (lastCheckin) {
+                        const lastCheckinDate = new Date(lastCheckin);
+                        const yesterday = new Date();
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        
+                        if (lastCheckinDate.toDateString() !== yesterday.toDateString() && 
+                            lastCheckinDate.toDateString() !== new Date().toDateString()) {
+                            // Reset streak
+                            await supabase
+                                .from('users')
+                                .update({ daily_streak: 0 })
+                                .eq('id', userId);
+                            currentStreak = 0;
+                            document.getElementById('currentStreak').textContent = currentStreak;
+                        }
+                    }
+                    
+                    updateCheckinUI(false);
+                }
+                
+            } catch (error) {
+                console.error('Error loading check-in status:', error);
+            }
+        }
+        
+        // Update check-in UI based on status
+        function updateCheckinUI(alreadyCheckedIn) {
+            const icon = document.getElementById('checkinIcon');
+            const title = document.getElementById('checkinTitle');
+            const description = document.getElementById('checkinDescription');
+            const button = document.getElementById('checkinBtn');
+            const rewardText = document.getElementById('todayReward');
+            
+            // Calculate today's reward based on streak
+            const rewards = [10, 20, 30, 40, 50, 75, 100];
+            const todayReward = rewards[Math.min(currentStreak, 6)];
+            
+            if (alreadyCheckedIn) {
+                icon.textContent = '✅';
+                title.textContent = 'Already Checked In';
+                description.textContent = `You've already checked in today. Come back tomorrow!`;
+                button.textContent = 'Already Checked In';
+                button.disabled = true;
+                button.className = 'bg-gray-400 text-white px-8 py-3 rounded-lg font-bold text-lg cursor-not-allowed';
+                rewardText.innerHTML = `Today's reward: <span class="font-bold">${todayReward} coins</span> (claimed)`;
+            } else {
+                icon.textContent = '📅';
+                title.textContent = 'Daily Check-in';
+                description.textContent = `Check in today to continue your ${currentStreak}-day streak`;
+                button.textContent = 'Check In Today';
+                button.disabled = false;
+                button.className = 'bg-green-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition duration-200';
+                rewardText.innerHTML = `Today's reward: <span class="font-bold">${todayReward} coins</span>`;
+            }
+        }
+        
+        // Check-in button handler
+        document.getElementById('checkinBtn').addEventListener('click', async () => {
+            if (todayCheckedIn) return;
+            
+            try {
+                // Calculate reward based on streak
+                const rewards = [10, 20, 30, 40, 50, 75, 100];
+                const coins = rewards[Math.min(currentStreak, 6)];
+                const newStreak = currentStreak + 1;
+                const today = new Date().toISOString().split('T')[0];
+                
+                // Add earning record
+                const { data, error } = await supabase
+                    .from('earnings')
+                    .insert([
+                        { 
+                            user_id: userId,
+                            type: 'checkin',
+                            coins: coins
+                        }
+                    ]);
+                
+                if (error) throw error;
+                
+                // Update user's streak and coins
+                const { data: userData, error: userError } = await supabase
+                    .from('users')
+                    .select('total_coins, earned_coins')
+                    .eq('id', userId)
+                    .single();
+                
+                if (userError) throw userError;
+                
+                await supabase
+                    .from('users')
+                    .update({
+                        total_coins: userData.total_coins + coins,
+                        earned_coins: userData.earned_coins + coins,
+                        daily_streak: newStreak,
+                        last_checkin: today
+                    })
+                    .eq('id', userId);
+                
+                // Show success modal
+                document.getElementById('streakReward').textContent = `+${coins} coins`;
+                document.getElementById('newStreakCount').textContent = `${newStreak} day${newStreak > 1 ? 's' : ''}`;
+                document.getElementById('successModal').classList.remove('hidden');
+                
+                // Update UI
+                todayCheckedIn = true;
+                currentStreak = newStreak;
+                document.getElementById('currentStreak').textContent = currentStreak;
+                updateCheckinUI(true);
+                
+                // Reload history
+                loadCheckinHistory();
+                
+            } catch (error) {
+                console.error('Error recording check-in:', error);
+                alert('Error recording your check-in. Please try again.');
+            }
+        });
+        
+        // Load check-in history
+        async function loadCheckinHistory() {
+            try {
+                const { data, error } = await supabase
+                    .from('earnings')
+                    .select('*')
+                    .eq('user_id', userId)
+                    .eq('type', 'checkin')
+                    .order('created_at', { ascending: false })
+                    .limit(10);
+                
+                if (error) throw error;
+                
+                const historyContainer = document.getElementById('checkinHistory');
+                historyContainer.innerHTML = '';
+                
+                if (data.length === 0) {
+                    historyContainer.innerHTML = '<div class="text-center text-gray-500 py-4">No check-in history yet</div>';
+                    return;
+                }
+                
+                data.forEach(earning => {
+                    const earningElement = document.createElement('div');
+                    earningElement.className = 'flex justify-between items-center py-3 border-b';
+                    
+                    const date = new Date(earning.created_at);
+                    const dateString = date.toLocaleDateString();
+                    
+                    earningElement.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                <span class="text-green-600">📅</span>
+                            </div>
+                            <div>
+                                <div class="font-medium">Daily Check-in</div>
+                                <div class="text-sm text-gray-500">${dateString}</div>
+                            </div>
+                        </div>
+                        <div class="font-medium text-green-600">+${earning.coins} coins</div>
+                    `;
+                    
+                    historyContainer.appendChild(earningElement);
+                });
+            } catch (error) {
+                console.error('Error loading check-in history:', error);
+            }
+        }
+        
+        // Close modal
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('successModal').classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
