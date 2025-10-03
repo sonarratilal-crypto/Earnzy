@@ -1,0 +1,64 @@
+// assets/referral.js
+// Referral-related functions
+
+async function processReferralBonus(inviterId, inviteeId) {
+    try {
+        // Check if bonus already given
+        const { data: referralData, error: referralError } = await supabase
+            .from('referrals')
+            .select('bonus_given')
+            .eq('inviter_id', inviterId)
+            .eq('invitee_id', inviteeId)
+            .single();
+        
+        if (referralError || !referralData) return false;
+        if (referralData.bonus_given) return true;
+        
+        // Give bonus to both users
+        const bonusAmount = 250;
+        
+        // Give bonus to inviter
+        await addCoinsToWallet(inviterId, bonusAmount, 'referral');
+        
+        // Give bonus to invitee
+        await addCoinsToWallet(inviteeId, bonusAmount, 'referral');
+        
+        // Mark referral as processed
+        const { error: updateError } = await supabase
+            .from('referrals')
+            .update({ bonus_given: true })
+            .eq('inviter_id', inviterId)
+            .eq('invitee_id', inviteeId);
+        
+        if (updateError) throw updateError;
+        
+        return true;
+    } catch (error) {
+        console.error('Error processing referral bonus:', error);
+        return false;
+    }
+}
+
+async function getReferralStats(userId) {
+    const { data: referrals, error } = await supabase
+        .from('referrals')
+        .select(`
+            *,
+            invitee:users!referrals_invitee_id_fkey (email, created_at)
+        `)
+        .eq('inviter_id', userId);
+    
+    if (error) throw error;
+    
+    const totalReferrals = referrals.length;
+    const completedReferrals = referrals.filter(ref => ref.bonus_given).length;
+    const pendingReferrals = totalReferrals - completedReferrals;
+    const totalEarnings = completedReferrals * 250;
+    
+    return {
+        totalReferrals,
+        completedReferrals,
+        pendingReferrals,
+        totalEarnings
+    };
+}
