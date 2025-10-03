@@ -6,7 +6,154 @@
     <title>Login - Earnzy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .app-container {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .card-app {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+        
+        .btn-app {
+            width: 100%;
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+        }
+        
+        .btn-app:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
+        }
+        
+        .btn-app:active {
+            transform: translateY(0);
+        }
+        
+        .btn-app.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .success-message {
+            background-color: #d1fae5;
+            color: #065f46;
+            padding: 12px 16px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .error-message {
+            background-color: #fee2e2;
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .earnzy-logo {
+            font-weight: 700;
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ede9fe;
+            color: #8b5cf6;
+            font-size: 18px;
+        }
+        
+        .feature-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -14,10 +161,13 @@
         <header class="bg-white border-b border-gray-200">
             <div class="px-4 py-3">
                 <div class="flex justify-between items-center">
-                    <a href="index.html" class="text-gray-600">
-                        ← Back
+                    <a href="index.html" class="text-gray-600 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                        </svg>
+                        Back
                     </a>
-                    <h1 class="text-xl font-bold text-gray-800">Earnzy</h1>
+                    <h1 class="text-xl font-bold text-gray-800"><span class="earnzy-logo">Earnzy</span></h1>
                     <div class="w-6"></div> <!-- Spacer -->
                 </div>
             </div>
@@ -26,11 +176,11 @@
         <!-- Main Content -->
         <main class="p-6">
             <div class="text-center mb-8">
-                <div class="w-20 h-20 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <span class="text-3xl text-purple-600">🔐</span>
+                <div class="w-20 h-20 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4 pulse">
+                    <span class="text-3xl text-purple-600">💰</span>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome Back</h2>
-                <p class="text-gray-600">Sign in to your account</p>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome Back to Earnzy</h2>
+                <p class="text-gray-600">Sign in to continue your earning journey</p>
             </div>
 
             <!-- Login Form -->
@@ -47,29 +197,50 @@
                     </div>
                     
                     <button type="submit" class="btn-app mb-4">
-                        Sign In
+                        Sign In & Continue Earning
                     </button>
                 </form>
 
                 <div class="text-center">
                     <p class="text-gray-600 text-sm">
                         Don't have an account? 
-                        <a href="signup.html" class="text-purple-600 font-medium">Sign up</a>
+                        <a href="signup.html" class="text-purple-600 font-medium">Start earning now</a>
                     </p>
                 </div>
             </div>
 
-            <!-- Demo Accounts -->
-            <div class="card-app bg-blue-50 border-blue-200">
-                <h3 class="font-bold text-blue-800 mb-2">Demo Accounts</h3>
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-blue-700">Email:</span>
-                        <span class="font-mono">demo@earnzy.com</span>
+            <!-- Features -->
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        💸
                     </div>
-                    <div class="flex justify-between">
-                        <span class="text-blue-700">Password:</span>
-                        <span class="font-mono">demo123</span>
+                    <div class="feature-text">
+                        Earn Cash
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        🎯
+                    </div>
+                    <div class="feature-text">
+                        Complete Tasks
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        📈
+                    </div>
+                    <div class="feature-text">
+                        Track Earnings
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        🏆
+                    </div>
+                    <div class="feature-text">
+                        Win Rewards
                     </div>
                 </div>
             </div>
@@ -118,7 +289,7 @@
                     messageDiv.classList.remove('hidden');
                 } else {
                     messageDiv.className = 'success-message mt-4';
-                    messageDiv.textContent = 'Login successful! Redirecting...';
+                    messageDiv.textContent = 'Login successful! Redirecting to your earnings...';
                     messageDiv.classList.remove('hidden');
                     
                     setTimeout(() => {
@@ -131,29 +302,10 @@
                 messageDiv.classList.remove('hidden');
             } finally {
                 // Reset button
-                submitBtn.textContent = 'Sign In';
+                submitBtn.textContent = 'Sign In & Continue Earning';
                 submitBtn.classList.remove('loading');
                 submitBtn.disabled = false;
             }
-        });
-
-        // Demo account auto-fill
-        document.addEventListener('DOMContentLoaded', function() {
-            // Auto-fill demo account on click
-            const demoEmail = 'demo@earnzy.com';
-            const demoPassword = 'demo123';
-            
-            document.getElementById('email').addEventListener('focus', function() {
-                if (!this.value) {
-                    this.value = demoEmail;
-                }
-            });
-            
-            document.getElementById('password').addEventListener('focus', function() {
-                if (!this.value) {
-                    this.value = demoPassword;
-                }
-            });
         });
     </script>
 </body>
