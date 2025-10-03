@@ -3,32 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Earnzy</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Profile - Earnzy</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            color: #1e293b;
         }
         
-        .card {
+        .app-container {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .card-app {
             background: white;
             border-radius: 16px;
+            padding: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             border: 1px solid #e2e8f0;
             transition: all 0.3s ease;
         }
         
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        .card-app:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
         }
         
-        .btn-primary {
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+        
+        .btn-app {
             background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
             color: white;
             border: none;
@@ -38,43 +66,63 @@
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+            display: inline-block;
+            text-align: center;
         }
         
-        .btn-primary:hover {
+        .btn-app:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
         }
         
-        .pulse {
-            animation: pulse 2s infinite;
+        .btn-app:active {
+            transform: translateY(0);
         }
         
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-            100% {
-                transform: scale(1);
-            }
+        .btn-secondary {
+            background: white;
+            color: #7c3aed;
+            border: 2px solid #7c3aed;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
         }
         
-        .floating {
-            animation: float 6s ease-in-out infinite;
+        .btn-secondary:hover {
+            background: #7c3aed;
+            color: white;
         }
         
-        @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
-            100% {
-                transform: translateY(0px);
-            }
+        .btn-app.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .success-message {
+            background-color: #d1fae5;
+            color: #065f46;
+            padding: 12px 16px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .error-message {
+            background-color: #fee2e2;
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .earnzy-logo {
+            font-weight: 700;
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
         .profile-dropdown {
@@ -107,267 +155,929 @@
             background: #f8fafc;
         }
         
-        .progress-bar {
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 10px 0;
+        .tab-content {
+            display: none;
         }
         
-        .progress-fill {
+        .tab-content.active {
+            display: block;
+        }
+        
+        .tab-button {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            background: transparent;
+            color: #6b7280;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .tab-button.active {
+            background: #8b5cf6;
+            color: white;
+        }
+        
+        .tab-button:hover:not(.active) {
+            background: #f3f4f6;
+        }
+        
+        .faq-item {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 0;
+        }
+        
+        .faq-question {
+            font-weight: 600;
+            color: #1f2937;
+            cursor: pointer;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .faq-answer {
+            color: #6b7280;
+            margin-top: 8px;
+            display: none;
+        }
+        
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+        
+        .avatar-upload {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+        }
+        
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #6b7280;
+            overflow: hidden;
+        }
+        
+        .avatar-preview img {
+            width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, #8b5cf6, #7c3aed);
-            border-radius: 4px;
+            object-fit: cover;
+        }
+        
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #8b5cf6;
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
-<body class="min-h-screen">
-    <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-10">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center">
-                    <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mr-3">
-                        <span class="text-purple-600 text-xl">💰</span>
-                    </div>
-                    <h1 class="text-2xl font-bold text-gray-800">Earnzy</h1>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
+            <div class="px-4 py-3">
+                <div class="flex justify-between items-center">
+                    <a href="dashboard.html" class="text-gray-600 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                        </svg>
+                        Back to Dashboard
+                    </a>
+                    <h1 class="text-xl font-bold text-gray-800"><span class="earnzy-logo">Earnzy</span></h1>
+                    <div class="w-6"></div> <!-- Spacer -->
                 </div>
-                
-                <!-- Profile Button -->
-                <div class="relative">
-                    <button id="profileBtn" class="flex items-center gap-2 bg-purple-50 hover:bg-purple-100 rounded-full p-2 transition-colors">
-                        <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white">
-                            <span class="text-sm font-bold">T</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="p-4 max-w-4xl mx-auto">
+            <div class="text-center mb-8">
+                <div class="avatar-upload">
+                    <div class="avatar-preview" id="avatarPreview">
+                        <span id="avatarInitials">U</span>
+                    </div>
+                    <div class="avatar-upload-btn" id="avatarUploadBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <input type="file" id="avatarInput" accept="image/*" class="hidden">
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-1" id="userNameDisplay">User Name</h2>
+                <p class="text-gray-600" id="userEmailDisplay">user@example.com</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Sidebar Navigation -->
+                <div class="md:col-span-1">
+                    <div class="card-app p-4">
+                        <nav class="space-y-2">
+                            <button class="tab-button active" data-tab="profile">Profile Information</button>
+                            <button class="tab-button" data-tab="security">Security</button>
+                            <button class="tab-button" data-tab="earnings">Earnings & Stats</button>
+                            <button class="tab-button" data-tab="faq">FAQ & Help</button>
+                            <button class="tab-button" data-tab="settings">App Settings</button>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="md:col-span-3">
+                    <!-- Profile Information Tab -->
+                    <div class="tab-content active" id="profile-tab">
+                        <div class="card-app mb-6">
+                            <h3 class="text-xl font-bold mb-4">Profile Information</h3>
+                            <form id="profileForm">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label for="firstName" class="form-label">First Name</label>
+                                        <input type="text" id="firstName" class="form-input" placeholder="Enter your first name">
+                                    </div>
+                                    <div>
+                                        <label for="lastName" class="form-label">Last Name</label>
+                                        <input type="text" id="lastName" class="form-input" placeholder="Enter your last name">
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input type="email" id="email" class="form-input" placeholder="Enter your email" readonly>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" id="phone" class="form-input" placeholder="Enter your phone number">
+                                </div>
+                                <div class="mb-6">
+                                    <label for="country" class="form-label">Country</label>
+                                    <select id="country" class="form-input">
+                                        <option value="">Select your country</option>
+                                        <option value="india">India</option>
+                                        <option value="usa">United States</option>
+                                        <option value="uk">United Kingdom</option>
+                                        <option value="canada">Canada</option>
+                                        <option value="australia">Australia</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn-app">Update Profile</button>
+                            </form>
                         </div>
-                        <span class="text-gray-700 font-medium">test@gmail.com</span>
-                        <i class="fas fa-chevron-down text-gray-500"></i>
-                    </button>
-                    
-                    <!-- Profile Dropdown -->
-                    <div id="profileDropdown" class="profile-dropdown">
-                        <div class="dropdown-item">
-                            <i class="fas fa-user text-purple-600"></i>
-                            <span>My Profile</span>
+
+                        <div class="card-app">
+                            <h3 class="text-xl font-bold mb-4">Referral Information</h3>
+                            <div class="flex items-center justify-between p-4 bg-purple-50 rounded-xl mb-4">
+                                <div>
+                                    <p class="text-sm text-purple-700">Your Referral Code</p>
+                                    <p class="text-xl font-bold font-mono" id="referralCodeDisplay">Loading...</p>
+                                </div>
+                                <button id="copyReferralBtn" class="btn-secondary text-sm">Copy Code</button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="stat-card">
+                                    <div class="text-2xl font-bold text-purple-600" id="totalReferrals">0</div>
+                                    <div class="text-sm text-gray-600">Total Referrals</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="text-2xl font-bold text-green-600" id="referralEarnings">0</div>
+                                    <div class="text-sm text-gray-600">Referral Earnings</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="dropdown-item">
-                            <i class="fas fa-wallet text-purple-600"></i>
-                            <span>Wallet</span>
+                    </div>
+
+                    <!-- Security Tab -->
+                    <div class="tab-content" id="security-tab">
+                        <div class="card-app mb-6">
+                            <h3 class="text-xl font-bold mb-4">Change Password</h3>
+                            <form id="passwordForm">
+                                <div class="mb-4">
+                                    <label for="currentPassword" class="form-label">Current Password</label>
+                                    <input type="password" id="currentPassword" class="form-input" placeholder="Enter current password" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="newPassword" class="form-label">New Password</label>
+                                    <input type="password" id="newPassword" class="form-input" placeholder="Enter new password" minlength="6" required>
+                                </div>
+                                <div class="mb-6">
+                                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                    <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm new password" minlength="6" required>
+                                </div>
+                                <button type="submit" class="btn-app">Change Password</button>
+                            </form>
                         </div>
-                        <div class="dropdown-item">
-                            <i class="fas fa-cog text-purple-600"></i>
-                            <span>Settings</span>
+
+                        <div class="card-app">
+                            <h3 class="text-xl font-bold mb-4">Security Settings</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Two-Factor Authentication</p>
+                                        <p class="text-sm text-gray-600">Add an extra layer of security to your account</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                    </label>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Login Notifications</p>
+                                        <p class="text-sm text-gray-600">Get notified when someone logs into your account</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                    </label>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Session Management</p>
+                                        <p class="text-sm text-gray-600">Manage your active sessions</p>
+                                    </div>
+                                    <button class="btn-secondary text-sm">Manage</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="border-t my-2"></div>
-                        <div class="dropdown-item">
-                            <i class="fas fa-sign-out-alt text-red-500"></i>
-                            <span class="text-red-500">Logout</span>
+                    </div>
+
+                    <!-- Earnings & Stats Tab -->
+                    <div class="tab-content" id="earnings-tab">
+                        <div class="card-app mb-6">
+                            <h3 class="text-xl font-bold mb-4">Earnings Overview</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                <div class="stat-card">
+                                    <div class="text-2xl font-bold text-purple-600" id="totalCoins">0</div>
+                                    <div class="text-sm text-gray-600">Total Coins</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="text-2xl font-bold text-green-600" id="earnedCoins">0</div>
+                                    <div class="text-sm text-gray-600">Earned Coins</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="text-2xl font-bold text-blue-600" id="withdrawnCoins">0</div>
+                                    <div class="text-sm text-gray-600">Withdrawn Coins</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="text-2xl font-bold text-yellow-600" id="dailyStreak">0</div>
+                                    <div class="text-sm text-gray-600">Day Streak</div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 rounded-xl p-4">
+                                <h4 class="font-bold mb-3">Earnings Breakdown</h4>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Watching Ads</span>
+                                        <span class="font-medium" id="adsEarnings">0 coins</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Scratch Cards</span>
+                                        <span class="font-medium" id="scratchEarnings">0 coins</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Daily Check-ins</span>
+                                        <span class="font-medium" id="checkinEarnings">0 coins</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Treasure Boxes</span>
+                                        <span class="font-medium" id="treasureEarnings">0 coins</span>
+                                    </div>
+                                    <div class="flex justify-between items-center border-t pt-2">
+                                        <span class="font-bold">Total Earnings</span>
+                                        <span class="font-bold text-green-600" id="totalEarnings">0 coins</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-app">
+                            <h3 class="text-xl font-bold mb-4">Recent Activity</h3>
+                            <div id="recentActivity" class="space-y-3">
+                                <div class="text-center text-gray-500 py-4">
+                                    <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <span class="text-gray-400">📊</span>
+                                    </div>
+                                    <p>No activity yet</p>
+                                    <p class="text-sm">Your activity will appear here</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Tab -->
+                    <div class="tab-content" id="faq-tab">
+                        <div class="card-app">
+                            <h3 class="text-xl font-bold mb-4">Frequently Asked Questions</h3>
+                            <div class="space-y-2">
+                                <div class="faq-item">
+                                    <div class="faq-question">
+                                        How do I earn coins on Earnzy?
+                                        <svg class="ml-auto h-5 w-5 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
+                                    <div class="faq-answer">
+                                        You can earn coins by watching ads, completing tasks, scratching cards, daily check-ins, opening treasure boxes, and referring friends. Each activity gives you a specific amount of coins.
+                                    </div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question">
+                                        What is the minimum withdrawal amount?
+                                        <svg class="ml-auto h-5 w-5 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
+                                    <div class="faq-answer">
+                                        The minimum withdrawal amount is 1,000 coins. There is a 5% processing fee on all withdrawals.
+                                    </div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question">
+                                        How long does it take to receive my withdrawal?
+                                        <svg class="ml-auto h-5 w-5 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
+                                    <div class="faq-answer">
+                                        Withdrawals are typically processed within 24-48 hours. You'll receive a notification once your withdrawal has been processed.
+                                    </div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question">
+                                        Can I use multiple devices with my account?
+                                        <svg class="ml-auto h-5 w-5 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
+                                    <div class="faq-answer">
+                                        Yes, you can use your account on multiple devices. However, you cannot earn coins simultaneously on multiple devices for the same activity.
+                                    </div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question">
+                                        What happens if I forget my password?
+                                        <svg class="ml-auto h-5 w-5 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
+                                    <div class="faq-answer">
+                                        You can reset your password by clicking on "Forgot Password" on the login page. You'll receive an email with instructions to reset your password.
+                                    </div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question">
+                                        How does the referral program work?
+                                        <svg class="ml-auto h-5 w-5 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
+                                    <div class="faq-answer">
+                                        Share your unique referral code with friends. When they sign up using your code and complete their first task, both you and your friend receive 250 coins as a bonus.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-app mt-6">
+                            <h3 class="text-xl font-bold mb-4">Contact Support</h3>
+                            <p class="text-gray-600 mb-4">Can't find the answer to your question? Our support team is here to help.</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <a href="mailto:support@earnzy.com" class="flex items-center p-4 bg-blue-50 rounded-xl border border-blue-200 hover:bg-blue-100 transition-colors">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                        <span class="text-blue-600">📧</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium">Email Support</div>
+                                        <div class="text-sm text-gray-600">support@earnzy.com</div>
+                                    </div>
+                                </a>
+                                <a href="#" class="flex items-center p-4 bg-green-50 rounded-xl border border-green-200 hover:bg-green-100 transition-colors">
+                                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                        <span class="text-green-600">💬</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium">Live Chat</div>
+                                        <div class="text-sm text-gray-600">Available 24/7</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- App Settings Tab -->
+                    <div class="tab-content" id="settings-tab">
+                        <div class="card-app mb-6">
+                            <h3 class="text-xl font-bold mb-4">Notification Settings</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Push Notifications</p>
+                                        <p class="text-sm text-gray-600">Receive notifications about new earning opportunities</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                    </label>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Email Notifications</p>
+                                        <p class="text-sm text-gray-600">Receive updates and promotions via email</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                    </label>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Withdrawal Alerts</p>
+                                        <p class="text-sm text-gray-600">Get notified when withdrawals are processed</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-app">
+                            <h3 class="text-xl font-bold mb-4">App Preferences</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="language" class="form-label">Language</label>
+                                    <select id="language" class="form-input">
+                                        <option value="english" selected>English</option>
+                                        <option value="hindi">Hindi</option>
+                                        <option value="spanish">Spanish</option>
+                                        <option value="french">French</option>
+                                        <option value="german">German</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="currency" class="form-label">Currency</label>
+                                    <select id="currency" class="form-input">
+                                        <option value="inr" selected>Indian Rupee (₹)</option>
+                                        <option value="usd">US Dollar ($)</option>
+                                        <option value="eur">Euro (€)</option>
+                                        <option value="gbp">British Pound (£)</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center justify-between pt-4 border-t">
+                                    <div>
+                                        <p class="font-medium">Clear App Cache</p>
+                                        <p class="text-sm text-gray-600">Clear temporary data to free up space</p>
+                                    </div>
+                                    <button class="btn-secondary text-sm">Clear</button>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">App Version</p>
+                                        <p class="text-sm text-gray-600">Check for updates</p>
+                                    </div>
+                                    <div class="text-sm text-gray-600">v1.2.3</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </header>
 
-    <!-- Dashboard Content -->
-    <main class="container mx-auto px-4 py-6">
-        <!-- Welcome Section -->
-        <section class="mb-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome back!</h2>
-            <p class="text-gray-600">Ready to earn more coins?</p>
-        </section>
-
-        <!-- Referral Code -->
-        <section class="card p-6 mb-8">
-            <h3 class="text-lg font-bold text-gray-800 mb-4">Referral Code</h3>
-            <div class="flex items-center justify-between bg-purple-50 p-4 rounded-xl">
-                <span class="text-xl font-bold text-purple-700">HGNUC6PU</span>
-                <button class="btn-primary text-sm px-4 py-2">
-                    <i class="fas fa-share-alt mr-2"></i>Share
-                </button>
-            </div>
-            <p class="text-sm text-gray-500 mt-3">Share your code with friends and earn 250 coins when they sign up</p>
-        </section>
-
-        <!-- Quick Actions -->
-        <section class="mb-8">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">Quick Actions</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Watch Ads -->
-                <div class="card p-5 flex items-center justify-between hover:bg-purple-50 cursor-pointer">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
-                            <span class="text-xl text-blue-600">🎥</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-800">Watch Ads</h4>
-                            <p class="text-sm text-gray-600">10-20 coins</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-sm text-gray-500">5 available</span>
-                        <div class="progress-bar w-24">
-                            <div class="progress-fill" style="width: 60%"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Scratch Cards -->
-                <div class="card p-5 flex items-center justify-between hover:bg-purple-50 cursor-pointer">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mr-4">
-                            <span class="text-xl text-purple-600">✨</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-800">Scratch Cards</h4>
-                            <p class="text-sm text-gray-600">5-50 coins each</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-sm text-gray-500">3 cards left</span>
-                        <div class="progress-bar w-24">
-                            <div class="progress-fill" style="width: 30%"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Daily Check-in -->
-                <div class="card p-5 flex items-center justify-between hover:bg-purple-50 cursor-pointer">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-4">
-                            <span class="text-xl text-green-600">📅</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-800">Daily Check-in</h4>
-                            <p class="text-sm text-gray-600">Claim reward</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-sm text-green-600 font-bold">Available</span>
-                        <div class="progress-bar w-24">
-                            <div class="progress-fill" style="width: 100%"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Treasure Box -->
-                <div class="card p-5 flex items-center justify-between hover:bg-purple-50 cursor-pointer">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mr-4">
-                            <span class="text-xl text-red-600">🎁</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-800">Treasure Box</h4>
-                            <p class="text-sm text-gray-600">20-200 coins daily</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-sm text-gray-500">1 box today</span>
-                        <div class="progress-bar w-24">
-                            <div class="progress-fill" style="width: 20%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- More Ways to Earn -->
-        <section>
-            <h3 class="text-xl font-bold text-gray-800 mb-4">More Ways to Earn</h3>
-            <div class="card p-6">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mr-4">
-                            <span class="text-xl text-indigo-600">👥</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-800">Refer Friends</h4>
-                            <p class="text-sm text-gray-600">Earn 250 coins each</p>
-                        </div>
-                    </div>
-                    <button class="btn-primary text-sm px-4 py-2">
-                        <i class="fas fa-user-plus mr-2"></i>Invite
-                    </button>
-                </div>
-                
-                <!-- Additional earning methods -->
-                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="flex items-center p-3 bg-gray-50 rounded-xl">
-                        <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center mr-3">
-                            <span class="text-yellow-600">📝</span>
-                        </div>
-                        <div>
-                            <h5 class="font-medium text-gray-800">Complete Surveys</h5>
-                            <p class="text-xs text-gray-600">50-100 coins</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center p-3 bg-gray-50 rounded-xl">
-                        <div class="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center mr-3">
-                            <span class="text-pink-600">🎮</span>
-                        </div>
-                        <div>
-                            <h5 class="font-medium text-gray-800">Play Games</h5>
-                            <p class="text-xs text-gray-600">15-30 coins</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center p-3 bg-gray-50 rounded-xl">
-                        <div class="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center mr-3">
-                            <span class="text-teal-600">🛒</span>
-                        </div>
-                        <div>
-                            <h5 class="font-medium text-gray-800">Shop Online</h5>
-                            <p class="text-xs text-gray-600">Cashback offers</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center p-3 bg-gray-50 rounded-xl">
-                        <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center mr-3">
-                            <span class="text-orange-600">📱</span>
-                        </div>
-                        <div>
-                            <h5 class="font-medium text-gray-800">Install Apps</h5>
-                            <p class="text-xs text-gray-600">30-80 coins</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-12 py-6">
-        <div class="container mx-auto px-4 text-center">
-            <div class="flex justify-center space-x-6 mb-4">
-                <a href="#" class="text-gray-600 hover:text-purple-600 transition-colors">About</a>
-                <a href="#" class="text-gray-600 hover:text-purple-600 transition-colors">FAQ</a>
-                <a href="#" class="text-gray-600 hover:text-purple-600 transition-colors">Contact</a>
-                <a href="#" class="text-gray-600 hover:text-purple-600 transition-colors">Privacy Policy</a>
-                <a href="#" class="text-gray-600 hover:text-purple-600 transition-colors">Terms</a>
-            </div>
-            <p class="text-gray-500 text-sm">© 2023 Earnzy. All rights reserved.</p>
-        </div>
-    </footer>
+            <!-- Message Display -->
+            <div id="message" class="hidden mt-6"></div>
+        </main>
+    </div>
 
     <script>
-        // Profile dropdown functionality
-        const profileBtn = document.getElementById('profileBtn');
-        const profileDropdown = document.getElementById('profileDropdown');
+        // Initialize Supabase
+        const supabaseUrl = 'https://qwoqpwyjugfsiwlwvmlf.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3b3Fwd3lqdWdmc2l3bHd2bWxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0NzkzNDAsImV4cCI6MjA3NTA1NTM0MH0.36cfavBebNeF4SLuar3jUTRORYnhaOhc6A5xuF4HvLw';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
         
-        profileBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            profileDropdown.classList.toggle('show');
+        let userId = null;
+        let userData = null;
+        
+        // Check authentication
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (!session) {
+                window.location.href = 'login.html';
+            } else {
+                userId = session.user.id;
+                loadUserData();
+                loadReferralData();
+                loadEarningsData();
+                loadRecentActivity();
+            }
         });
         
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function() {
-            profileDropdown.classList.remove('show');
+        // Load user data
+        async function loadUserData() {
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', userId)
+                    .single();
+                
+                if (error) throw error;
+                
+                userData = data;
+                
+                // Populate form fields
+                document.getElementById('email').value = data.email;
+                document.getElementById('userEmailDisplay').textContent = data.email;
+                
+                // Set user name if available
+                if (data.first_name || data.last_name) {
+                    const fullName = `${data.first_name || ''} ${data.last_name || ''}`.trim();
+                    document.getElementById('userNameDisplay').textContent = fullName || 'User Name';
+                    document.getElementById('avatarInitials').textContent = getInitials(fullName || 'U');
+                } else {
+                    document.getElementById('userNameDisplay').textContent = 'User Name';
+                    document.getElementById('avatarInitials').textContent = 'U';
+                }
+                
+                if (data.first_name) document.getElementById('firstName').value = data.first_name;
+                if (data.last_name) document.getElementById('lastName').value = data.last_name;
+                if (data.phone) document.getElementById('phone').value = data.phone;
+                if (data.country) document.getElementById('country').value = data.country;
+                
+                // Display stats
+                document.getElementById('totalCoins').textContent = data.total_coins || 0;
+                document.getElementById('earnedCoins').textContent = data.earned_coins || 0;
+                document.getElementById('withdrawnCoins').textContent = data.withdrawn_coins || 0;
+                document.getElementById('dailyStreak').textContent = data.daily_streak || 0;
+                
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+        
+        // Get initials from name
+        function getInitials(name) {
+            return name.split(' ').map(part => part.charAt(0)).join('').toUpperCase().substring(0, 2);
+        }
+        
+        // Load referral data
+        async function loadReferralData() {
+            try {
+                const { data: userData, error } = await supabase
+                    .from('users')
+                    .select('referral_code')
+                    .eq('id', userId)
+                    .single();
+                
+                if (error) throw error;
+                
+                document.getElementById('referralCodeDisplay').textContent = userData.referral_code;
+                
+                // Get referral stats
+                const { data: referralsData, error: referralsError } = await supabase
+                    .from('referrals')
+                    .select('*')
+                    .eq('inviter_id', userId);
+                
+                if (!referralsError) {
+                    document.getElementById('totalReferrals').textContent = referralsData.length;
+                }
+                
+                // Calculate referral earnings
+                const { data: earningsData, error: earningsError } = await supabase
+                    .from('earnings')
+                    .select('coins')
+                    .eq('user_id', userId)
+                    .eq('type', 'referral');
+                
+                if (!earningsError) {
+                    const totalEarnings = earningsData.reduce((sum, earning) => sum + earning.coins, 0);
+                    document.getElementById('referralEarnings').textContent = totalEarnings;
+                }
+                
+            } catch (error) {
+                console.error('Error loading referral data:', error);
+            }
+        }
+        
+        // Load earnings breakdown
+        async function loadEarningsData() {
+            try {
+                const types = ['watch', 'scratch', 'checkin', 'treasure'];
+                const typeNames = {
+                    'watch': 'adsEarnings',
+                    'scratch': 'scratchEarnings',
+                    'checkin': 'checkinEarnings',
+                    'treasure': 'treasureEarnings'
+                };
+                
+                let totalEarnings = 0;
+                
+                for (const type of types) {
+                    const { data, error } = await supabase
+                        .from('earnings')
+                        .select('coins')
+                        .eq('user_id', userId)
+                        .eq('type', type);
+                    
+                    if (!error) {
+                        const typeTotal = data.reduce((sum, earning) => sum + earning.coins, 0);
+                        document.getElementById(typeNames[type]).textContent = `${typeTotal} coins`;
+                        totalEarnings += typeTotal;
+                    }
+                }
+                
+                document.getElementById('totalEarnings').textContent = `${totalEarnings} coins`;
+                
+            } catch (error) {
+                console.error('Error loading earnings data:', error);
+            }
+        }
+        
+        // Load recent activity
+        async function loadRecentActivity() {
+            try {
+                const { data, error } = await supabase
+                    .from('earnings')
+                    .select('*')
+                    .eq('user_id', userId)
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+                
+                if (error) throw error;
+                
+                const activityContainer = document.getElementById('recentActivity');
+                activityContainer.innerHTML = '';
+                
+                if (data.length === 0) {
+                    activityContainer.innerHTML = `
+                        <div class="text-center text-gray-500 py-4">
+                            <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <span class="text-gray-400">📊</span>
+                            </div>
+                            <p>No activity yet</p>
+                            <p class="text-sm">Your activity will appear here</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                data.forEach(earning => {
+                    const activityElement = document.createElement('div');
+                    activityElement.className = 'flex justify-between items-center py-3 border-b border-gray-100';
+                    
+                    const typeMap = {
+                        'watch': { icon: '🎥', color: 'blue', name: 'Watch Ad' },
+                        'scratch': { icon: '✨', color: 'purple', name: 'Scratch Card' },
+                        'checkin': { icon: '📅', color: 'green', name: 'Daily Check-in' },
+                        'treasure': { icon: '🎁', color: 'red', name: 'Treasure Box' },
+                        'referral': { icon: '👥', color: 'indigo', name: 'Referral Bonus' }
+                    };
+                    
+                    const typeInfo = typeMap[earning.type] || { icon: '💰', color: 'gray', name: 'Earning' };
+                    const date = new Date(earning.created_at);
+                    const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    activityElement.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-${typeInfo.color}-100 rounded-xl flex items-center justify-center mr-3">
+                                <span class="text-${typeInfo.color}-600">${typeInfo.icon}</span>
+                            </div>
+                            <div>
+                                <div class="font-medium">${typeInfo.name}</div>
+                                <div class="text-sm text-gray-500">${timeString}</div>
+                            </div>
+                        </div>
+                        <div class="font-bold text-green-600">+${earning.coins}</div>
+                    `;
+                    
+                    activityContainer.appendChild(activityElement);
+                });
+            } catch (error) {
+                console.error('Error loading recent activity:', error);
+            }
+        }
+        
+        // Tab switching functionality
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons and content
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Show corresponding content
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
         });
         
-        // Prevent closing when clicking inside dropdown
-        profileDropdown.addEventListener('click', function(e) {
-            e.stopPropagation();
+        // FAQ toggle functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', function() {
+                const faqItem = this.parentElement;
+                const isActive = faqItem.classList.contains('active');
+                
+                // Close all FAQ items
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.classList.remove('active');
+                    item.querySelector('svg').style.transform = 'rotate(0deg)';
+                });
+                
+                // If the clicked item wasn't active, open it
+                if (!isActive) {
+                    faqItem.classList.add('active');
+                    this.querySelector('svg').style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+        
+        // Profile form submission
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const phone = document.getElementById('phone').value;
+            const country = document.getElementById('country').value;
+            const messageDiv = document.getElementById('message');
+            const submitBtn = document.querySelector('#profileForm button[type="submit"]');
+            
+            // Show loading state
+            submitBtn.textContent = 'Updating...';
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .update({
+                        first_name: firstName,
+                        last_name: lastName,
+                        phone: phone,
+                        country: country,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', userId);
+                
+                if (error) throw error;
+                
+                messageDiv.className = 'success-message';
+                messageDiv.textContent = 'Profile updated successfully!';
+                messageDiv.classList.remove('hidden');
+                
+                // Update display name
+                const fullName = `${firstName || ''} ${lastName || ''}`.trim();
+                document.getElementById('userNameDisplay').textContent = fullName || 'User Name';
+                document.getElementById('avatarInitials').textContent = getInitials(fullName || 'U');
+                
+            } catch (error) {
+                messageDiv.className = 'error-message';
+                messageDiv.textContent = 'Error updating profile: ' + error.message;
+                messageDiv.classList.remove('hidden');
+            } finally {
+                // Reset button
+                submitBtn.textContent = 'Update Profile';
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                
+                // Hide message after 3 seconds
+                setTimeout(() => {
+                    messageDiv.classList.add('hidden');
+                }, 3000);
+            }
+        });
+        
+        // Password form submission
+        document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const messageDiv = document.getElementById('message');
+            const submitBtn = document.querySelector('#passwordForm button[type="submit"]');
+            
+            // Validation
+            if (newPassword !== confirmPassword) {
+                messageDiv.className = 'error-message';
+                messageDiv.textContent = 'New passwords do not match';
+                messageDiv.classList.remove('hidden');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                messageDiv.className = 'error-message';
+                messageDiv.textContent = 'Password must be at least 6 characters long';
+                messageDiv.classList.remove('hidden');
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.textContent = 'Changing Password...';
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            
+            try {
+                const { data, error } = await supabase.auth.updateUser({
+                    password: newPassword
+                });
+                
+                if (error) throw error;
+                
+                messageDiv.className = 'success-message';
+                messageDiv.textContent = 'Password changed successfully!';
+                messageDiv.classList.remove('hidden');
+                
+                // Clear form
+                document.getElementById('passwordForm').reset();
+                
+            } catch (error) {
+                messageDiv.className = 'error-message';
+                messageDiv.textContent = 'Error changing password: ' + error.message;
+                messageDiv.classList.remove('hidden');
+            } finally {
+                // Reset button
+                submitBtn.textContent = 'Change Password';
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                
+                // Hide message after 3 seconds
+                setTimeout(() => {
+                    messageDiv.classList.add('hidden');
+                }, 3000);
+            }
+        });
+        
+        // Copy referral code
+        document.getElementById('copyReferralBtn').addEventListener('click', () => {
+            const referralCode = document.getElementById('referralCodeDisplay').textContent;
+            navigator.clipboard.writeText(referralCode).then(() => {
+                const messageDiv = document.getElementById('message');
+                messageDiv.className = 'success-message';
+                messageDiv.textContent = 'Referral code copied to clipboard!';
+                messageDiv.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    messageDiv.classList.add('hidden');
+                }, 2000);
+            });
+        });
+        
+        // Avatar upload functionality
+        document.getElementById('avatarUploadBtn').addEventListener('click', () => {
+            document.getElementById('avatarInput').click();
+        });
+        
+        document.getElementById('avatarInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const avatarPreview = document.getElementById('avatarPreview');
+                    avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Profile Avatar">`;
+                    
+                    // In a real app, you would upload this to your server/Supabase storage
+                    const messageDiv = document.getElementById('message');
+                    messageDiv.className = 'success-message';
+                    messageDiv.textContent = 'Profile picture updated!';
+                    messageDiv.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        messageDiv.classList.add('hidden');
+                    }, 2000);
+                };
+                reader.readAsDataURL(file);
+            }
         });
     </script>
 </body>
